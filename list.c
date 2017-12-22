@@ -98,6 +98,7 @@ int main(int argv, char *argc[])
     printf("list_entry:%d\n",list_empty(&head));
     doublelist_exit();
     printf("list_entry:%d\n",list_empty(&head));
+
 #endif
     return 0;  
 }  
