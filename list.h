@@ -1,6 +1,6 @@
 #ifndef __LIST_H
 #define __LIST_H
-
+#include <stdio.h>
 
 /**********************************************************
  *功能描述：链表结构体
@@ -65,11 +65,13 @@ static inline void list_move_tail(struct list_head *list, struct list_head *head
     __list_del(list->prev, list->next); // 把节点从链表上卸下来
     list_add_tail(list, head);// 把卸下来的节点插入到链表头节点的尾部
 }
+void list_move_swap(struct list_head *list1, struct list_head *list2);
 /**********************************************************
  *功能描述：链表节点替换操作
  *********************************************************/
 // 这是个替换的通用函数。就是让new节点替换old节点，但
 // old指针的前驱和后继都没有改变，就是old节点还是挂在链表上的
+//这个函数old不安全
 static inline void list_replace(struct list_head *old,
         struct list_head *new)
 {
@@ -78,6 +80,7 @@ static inline void list_replace(struct list_head *old,
     new->prev = old->prev;
     new->prev->next = new;
 }
+
 // 这个函数首先调用list_replace() 函数用new替换了old的指针关系。
 // 然后调用INIT_LIST_HEAD() 函数让old节点变成空节点
 static inline void list_replace_init(struct list_head *old,
@@ -101,14 +104,7 @@ static inline int list_empty(const struct list_head *head)
 {
     return head->next == head;
 }  //返回1表示链表为空，0表示不空
- // 这个函数和上面的一样，是个判空函数。唯一不同的是这个函数可以防止该该链表
- // 同时正在被另外一个cpu操作，以导致head的前驱和后续不一样。其实换个角度来看
- // 该函数也可以用来判断该链表是否还在被其他CPU操作
-static inline int list_empty_careful(const struct list_head *head)
-{
-    struct list_head *next = head->next;
-    return (next == head) && (next == head->prev);
-}
+
  // 这个函数是用来判断该链表中是否只有一个节点。
 static inline int list_is_singular(const struct list_head *head)
 {
